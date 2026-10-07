@@ -1,17 +1,27 @@
-# DocConvert Backend
+# DocConvert Backend — hardened version
 
-Free/self-hosted backend for:
-- PDF -> DOCX using `pdf2docx`
-- DOCX -> PDF using LibreOffice headless
+Security changes:
+- 20 MB request limit
+- per-IP rate limits
+- PDF/DOCX file signature validation
+- sanitized download filenames
+- generic client-facing errors
+- temporary-file cleanup after each response
+- LibreOffice timeout
+- non-root Docker user
+- restrictive browser security headers
+- configurable CORS allowlist
 
-## Render deployment
-Create a Render Web Service from this GitHub repository. Render should detect the Dockerfile automatically.
+## Required Render environment variable
 
-Endpoints:
-- `GET /` health check
-- `POST /pdf-to-word` multipart form field: `file`
-- `POST /word-to-pdf` multipart form field: `file`
+Set:
 
-Current upload limit: 20 MB.
+`ALLOWED_ORIGINS=https://YOUR-VERCEL-DOMAIN.vercel.app`
 
-Note: PDF-to-DOCX formatting quality depends on the source PDF. Scanned PDFs need OCR, which is not included in this first version.
+Later, if you add a custom domain:
+
+`ALLOWED_ORIGINS=https://YOUR-VERCEL-DOMAIN.vercel.app,https://yourdomain.com,https://www.yourdomain.com`
+
+Do not use `*` for the production CORS allowlist.
+
+Render will automatically redeploy when these files are committed to the connected GitHub repository.
